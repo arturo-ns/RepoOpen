@@ -32,27 +32,18 @@ public class PartnersController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Partner created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input or business rule violation"),
+            @ApiResponse(responseCode = "409", description = "Partner already exists"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<?> createPartner(@Valid @RequestBody CreatePartnerResource resource) {
-        try {
-            var createPartnerCommand = CreatePartnerCommandFromResourceAssembler.toCommandFromResource(resource);
-            var partner = partnerCommandService.handle(createPartnerCommand);
-            
-            if (partner.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new com.prueba.shared.interfaces.rest.resources.MessageResource("Error creating partner"));
-            }
-            
-            var partnerResource = PartnerResourceFromEntityAssembler.toResourceFromEntity(partner.get());
-            return new ResponseEntity<>(partnerResource, HttpStatus.CREATED);
-            
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new com.prueba.shared.interfaces.rest.resources.MessageResource("Error: " + e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new com.prueba.shared.interfaces.rest.resources.MessageResource("Error: " + e.getMessage()));
+    public ResponseEntity<PartnerResource> createPartner(@Valid @RequestBody CreatePartnerResource resource) {
+        var createPartnerCommand = CreatePartnerCommandFromResourceAssembler.toCommandFromResource(resource);
+        var partner = partnerCommandService.handle(createPartnerCommand);
+        
+        if (partner.isEmpty()) {
+            throw new RuntimeException("Error creating partner");
         }
+        
+        var partnerResource = PartnerResourceFromEntityAssembler.toResourceFromEntity(partner.get());
+        return new ResponseEntity<>(partnerResource, HttpStatus.CREATED);
     }
 }

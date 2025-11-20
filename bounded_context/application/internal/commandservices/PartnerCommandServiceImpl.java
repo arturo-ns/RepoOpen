@@ -1,5 +1,6 @@
 package com.prueba.bounded_context.application.internal.commandservices;
 
+import com.prueba.bounded_context.domain.exceptions.*;
 import com.prueba.bounded_context.domain.model.aggregates.Partner;
 import com.prueba.bounded_context.domain.model.commands.CreatePartnerCommand;
 import com.prueba.bounded_context.domain.services.PartnerCommandService;
@@ -24,7 +25,7 @@ public class PartnerCommandServiceImpl implements PartnerCommandService {
         // Validar regla de negocio: No permite dos partners con mismo firstName, lastName, companyName y country
         if (partnerRepository.existsByRepresentativeNameAndCompanyNameAndCountry(
                 command.firstName(), command.lastName(), command.companyName(), command.country())) {
-            throw new IllegalArgumentException(
+            throw new PartnerAlreadyExistsException(
                 "A partner representative with the same first name, last name, company name, and country already exists"
             );
         }
@@ -37,30 +38,30 @@ public class PartnerCommandServiceImpl implements PartnerCommandService {
         try {
             representativeName = new PersonName(command.firstName(), command.lastName());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid representative name: " + e.getMessage());
+            throw new InvalidPersonNameException("Invalid representative name: " + e.getMessage());
         }
 
         try {
             contactPhone = new PhoneNumber(command.contactPhone());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid phone number: " + e.getMessage());
+            throw new InvalidPhoneNumberException("Invalid phone number: " + e.getMessage());
         }
 
         try {
             contactEmail = new EmailAddress(command.contactEmail());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid email address: " + e.getMessage());
+            throw new InvalidEmailAddressException("Invalid email address: " + e.getMessage());
         }
 
         // Validar campos obligatorios
         if (command.companyName() == null || command.companyName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Company name is required");
+            throw new ValidationException("Company name is required");
         }
         if (command.city() == null || command.city().trim().isEmpty()) {
-            throw new IllegalArgumentException("City is required");
+            throw new ValidationException("City is required");
         }
         if (command.country() == null || command.country().trim().isEmpty()) {
-            throw new IllegalArgumentException("Country is required");
+            throw new ValidationException("Country is required");
         }
 
         // Crear y guardar el partner
@@ -77,7 +78,7 @@ public class PartnerCommandServiceImpl implements PartnerCommandService {
             Partner savedPartner = partnerRepository.save(partner);
             return Optional.of(savedPartner);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error saving partner: " + e.getMessage());
+            throw new ValidationException("Error saving partner: " + e.getMessage());
         }
     }
 }
