@@ -38,3 +38,10 @@ When creating a partner, you need to provide:
 - State or province (optional)
 
 The system will automatically generate a unique partner ID for each new partner.
+
+## Developer Information
+
+**Developer**: [Your Name]
+**Email**: [your.email@example.com]
+**GitHub**: [your-github-username]
+**LinkedIn**: [your-linkedin-profile]
