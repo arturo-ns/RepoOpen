@@ -1,6 +1,5 @@
 package com.prueba.shared.infrastructure.documentation.openapi.configuration;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -11,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfiguration {
-    // Properties
+
     @Value("${spring.application.name}")
     String applicationName;
 
@@ -21,13 +20,9 @@ public class OpenApiConfiguration {
     @Value("${documentation.application.version}")
     String applicationVersion;
 
-    // Methods
-
     @Bean
     public OpenAPI customPlatformOpenApi() {
 
-
-        // General configuration
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()

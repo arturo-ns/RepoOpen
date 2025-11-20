@@ -3,12 +3,11 @@ package com.prueba.shared.infrastructure.persistence.jpa.configuration.strategy;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
-import static io.github.encryptorcode.pluralize.Pluralize.pluralize;
 
 /**
- * Snake Case With Pluralized Table Physical Naming Strategy
+ * Snake Case Physical Naming Strategy
  * @summary
- * PhysicalNamingStrategy implementation that converts entity names to snake_case and table names to pluralized snake_case.
+ * PhysicalNamingStrategy implementation that converts entity names to snake_case.
  *
  * @since 1.0.0
  */
@@ -25,7 +24,7 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
 
     @Override
     public Identifier toPhysicalTableName(Identifier identifier, JdbcEnvironment jdbcEnvironment) {
-        return this.toSnakeCase(this.toPlural(identifier));
+        return this.toSnakeCase(identifier);
     }
 
     @Override
@@ -38,11 +37,7 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
         return this.toSnakeCase(identifier);
     }
 
-    /**
-     * Convert identifier to snake case
-     * @param identifier Identifier
-     * @return Identifier
-     */
+
     private Identifier toSnakeCase(final Identifier identifier) {
         if (identifier == null) {
             return null;
@@ -55,13 +50,4 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
         return Identifier.toIdentifier(newName);
     }
 
-    /**
-     * Convert identifier to plural
-     * @param identifier Identifier
-     * @return Identifier
-     */
-    private Identifier toPlural(final Identifier identifier) {
-        final String newName = pluralize(identifier.getText());
-        return Identifier.toIdentifier(newName);
-    }
 }
